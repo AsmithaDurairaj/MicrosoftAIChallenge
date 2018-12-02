@@ -1,0 +1,160 @@
+---------------------------------------------------------------------------
+InternalError                             Traceback (most recent call last)
+/opt/DL/tensorflow/lib/python3.6/site-packages/tensorflow/python/client/session.py in _do_call(self, fn, *args)
+   1277     try:
+-> 1278       return fn(*args)
+   1279     except errors.OpError as e:
+
+/opt/DL/tensorflow/lib/python3.6/site-packages/tensorflow/python/client/session.py in _run_fn(feed_dict, fetch_list, target_list, options, run_metadata)
+   1262       return self._call_tf_sessionrun(
+-> 1263           options, feed_dict, fetch_list, target_list, run_metadata)
+   1264 
+
+/opt/DL/tensorflow/lib/python3.6/site-packages/tensorflow/python/client/session.py in _call_tf_sessionrun(self, options, feed_dict, fetch_list, target_list, run_metadata)
+   1349         self._session, options, feed_dict, fetch_list, target_list,
+-> 1350         run_metadata)
+   1351 
+
+InternalError: Dst tensor is not initialized.
+	 [[Node: bert/encoder/layer_6/attention/output/dense/kernel/adam_m/_3635 = _Recv[_start_time=0, client_terminated=false, recv_device="/job:localhost/replica:0/task:0/device:CPU:0", send_device="/job:localhost/replica:0/task:0/device:GPU:0", send_device_incarnation=1, tensor_name="edge_420_bert/encoder/layer_6/attention/output/dense/kernel/adam_m", tensor_type=DT_FLOAT, _device="/job:localhost/replica:0/task:0/device:CPU:0"](^save/ShardedFilename, ^save/SaveV2/tensor_names, ^save/SaveV2/shape_and_slices, ^global_step/Read/ReadVariableOp/_4011)]]
+	 
+	 InternalError                             Traceback (most recent call last)
+<ipython-input-5-c0c8bac79dac> in <module>()
+    994   flags.mark_flag_as_required("bert_config_file")
+    995   flags.mark_flag_as_required("output_dir")
+--> 996   tf.app.run()
+
+/opt/DL/tensorflow/lib/python3.6/site-packages/tensorflow/python/platform/app.py in run(main, argv)
+    123   # Call the main function, passing through any arguments
+    124   # to the final program.
+--> 125   _sys.exit(main(argv))
+    126 
+
+<ipython-input-5-c0c8bac79dac> in main(_)
+    912         is_training=True,
+    913         drop_remainder=True)
+--> 914     estimator.train(input_fn=train_input_fn, max_steps=num_train_steps)
+    915 
+    916   if FLAGS.do_eval:
+
+/opt/DL/tensorflow/lib/python3.6/site-packages/tensorflow/python/estimator/estimator.py in train(self, input_fn, hooks, steps, max_steps, saving_listeners)
+    374 
+    375       saving_listeners = _check_listeners_type(saving_listeners)
+--> 376       loss = self._train_model(input_fn, hooks, saving_listeners)
+    377       logging.info('Loss for final step: %s.', loss)
+    378       return self
+
+/opt/DL/tensorflow/lib/python3.6/site-packages/tensorflow/python/estimator/estimator.py in _train_model(self, input_fn, hooks, saving_listeners)
+   1143       return self._train_model_distributed(input_fn, hooks, saving_listeners)
+   1144     else:
+-> 1145       return self._train_model_default(input_fn, hooks, saving_listeners)
+   1146 
+   1147   def _train_model_default(self, input_fn, hooks, saving_listeners):
+
+/opt/DL/tensorflow/lib/python3.6/site-packages/tensorflow/python/estimator/estimator.py in _train_model_default(self, input_fn, hooks, saving_listeners)
+   1171       return self._train_with_estimator_spec(estimator_spec, worker_hooks,
+   1172                                              hooks, global_step_tensor,
+-> 1173                                              saving_listeners)
+   1174 
+   1175   def _train_model_distributed(self, input_fn, hooks, saving_listeners):
+
+/opt/DL/tensorflow/lib/python3.6/site-packages/tensorflow/python/estimator/estimator.py in _train_with_estimator_spec(self, estimator_spec, worker_hooks, hooks, global_step_tensor, saving_listeners)
+   1446         save_summaries_steps=self._config.save_summary_steps,
+   1447         config=self._session_config,
+-> 1448         log_step_count_steps=self._config.log_step_count_steps) as mon_sess:
+   1449       loss = None
+   1450       while not mon_sess.should_stop():
+
+/opt/DL/tensorflow/lib/python3.6/site-packages/tensorflow/python/training/monitored_session.py in MonitoredTrainingSession(master, is_chief, checkpoint_dir, scaffold, hooks, chief_only_hooks, save_checkpoint_secs, save_summaries_steps, save_summaries_secs, config, stop_grace_period_secs, log_step_count_steps, max_wait_secs, save_checkpoint_steps, summary_dir)
+    419     all_hooks.extend(hooks)
+    420   return MonitoredSession(session_creator=session_creator, hooks=all_hooks,
+--> 421                           stop_grace_period_secs=stop_grace_period_secs)
+    422 
+    423 
+
+/opt/DL/tensorflow/lib/python3.6/site-packages/tensorflow/python/training/monitored_session.py in __init__(self, session_creator, hooks, stop_grace_period_secs)
+    830     super(MonitoredSession, self).__init__(
+    831         session_creator, hooks, should_recover=True,
+--> 832         stop_grace_period_secs=stop_grace_period_secs)
+    833 
+    834 
+
+/opt/DL/tensorflow/lib/python3.6/site-packages/tensorflow/python/training/monitored_session.py in __init__(self, session_creator, hooks, should_recover, stop_grace_period_secs)
+    553         stop_grace_period_secs=stop_grace_period_secs)
+    554     if should_recover:
+--> 555       self._sess = _RecoverableSession(self._coordinated_creator)
+    556     else:
+    557       self._sess = self._coordinated_creator.create_session()
+
+/opt/DL/tensorflow/lib/python3.6/site-packages/tensorflow/python/training/monitored_session.py in __init__(self, sess_creator)
+   1016     """
+   1017     self._sess_creator = sess_creator
+-> 1018     _WrappedSession.__init__(self, self._create_session())
+   1019 
+   1020   def _create_session(self):
+
+/opt/DL/tensorflow/lib/python3.6/site-packages/tensorflow/python/training/monitored_session.py in _create_session(self)
+   1021     while True:
+   1022       try:
+-> 1023         return self._sess_creator.create_session()
+   1024       except _PREEMPTION_ERRORS as e:
+   1025         logging.info('An error was raised while a session was being created. '
+
+/opt/DL/tensorflow/lib/python3.6/site-packages/tensorflow/python/training/monitored_session.py in create_session(self)
+    716       # Inform the hooks that a new session has been created.
+    717       for hook in self._hooks:
+--> 718         hook.after_create_session(self.tf_sess, self.coord)
+    719       return _CoordinatedSession(
+    720           _HookedSession(self.tf_sess, self._hooks), self.coord,
+
+/opt/DL/tensorflow/lib/python3.6/site-packages/tensorflow/python/training/basic_session_run_hooks.py in after_create_session(self, session, coord)
+    448     self._summary_writer.add_meta_graph(meta_graph_def)
+    449     # The checkpoint saved here is the state at step "global_step".
+--> 450     self._save(session, global_step)
+    451     self._timer.update_last_triggered_step(global_step)
+    452 
+
+/opt/DL/tensorflow/lib/python3.6/site-packages/tensorflow/python/training/basic_session_run_hooks.py in _save(self, session, step)
+    479       l.before_save(session, step)
+    480 
+--> 481     self._get_saver().save(session, self._save_path, global_step=step)
+    482     self._summary_writer.add_session_log(
+    483         SessionLog(
+
+/opt/DL/tensorflow/lib/python3.6/site-packages/tensorflow/python/training/saver.py in save(self, sess, save_path, global_step, latest_filename, meta_graph_suffix, write_meta_graph, write_state, strip_default_attrs)
+   1618           model_checkpoint_path = sess.run(
+   1619               self.saver_def.save_tensor_name,
+-> 1620               {self.saver_def.filename_tensor_name: checkpoint_file})
+   1621 
+   1622         model_checkpoint_path = compat.as_str(model_checkpoint_path)
+
+/opt/DL/tensorflow/lib/python3.6/site-packages/tensorflow/python/client/session.py in run(self, fetches, feed_dict, options, run_metadata)
+    875     try:
+    876       result = self._run(None, fetches, feed_dict, options_ptr,
+--> 877                          run_metadata_ptr)
+    878       if run_metadata:
+    879         proto_data = tf_session.TF_GetBuffer(run_metadata_ptr)
+
+/opt/DL/tensorflow/lib/python3.6/site-packages/tensorflow/python/client/session.py in _run(self, handle, fetches, feed_dict, options, run_metadata)
+   1098     if final_fetches or final_targets or (handle and feed_dict_tensor):
+   1099       results = self._do_run(handle, final_targets, final_fetches,
+-> 1100                              feed_dict_tensor, options, run_metadata)
+   1101     else:
+   1102       results = []
+
+/opt/DL/tensorflow/lib/python3.6/site-packages/tensorflow/python/client/session.py in _do_run(self, handle, target_list, fetch_list, feed_dict, options, run_metadata)
+   1270     if handle is None:
+   1271       return self._do_call(_run_fn, feeds, fetches, targets, options,
+-> 1272                            run_metadata)
+   1273     else:
+   1274       return self._do_call(_prun_fn, handle, feeds, fetches)
+
+/opt/DL/tensorflow/lib/python3.6/site-packages/tensorflow/python/client/session.py in _do_call(self, fn, *args)
+   1289         except KeyError:
+   1290           pass
+-> 1291       raise type(e)(node_def, op, message)
+   1292 
+   1293   def _extend_graph(self):
+
+InternalError: Dst tensor is not initialized.
+	 [[Node: bert/encoder/layer_6/attention/output/dense/kernel/adam_m/_3635 = _Recv[_start_time=0, client_terminated=false, recv_device="/job:localhost/replica:0/task:0/device:CPU:0", send_device="/job:localhost/replica:0/task:0/device:GPU:0", send_device_incarnation=1, tensor_name="edge_420_bert/encoder/layer_6/attention/output/dense/kernel/adam_m", tensor_type=DT_FLOAT, _device="/job:localhost/replica:0/task:0/device:CPU:0"](^save/ShardedFilename, ^save/SaveV2/tensor_names, ^save/SaveV2/shape_and_slices, ^global_step/Read/ReadVariableOp/_4011)]]
