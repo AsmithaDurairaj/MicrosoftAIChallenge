@@ -96,12 +96,12 @@ flags.DEFINE_bool(
     "models and False for cased models.")
 
 flags.DEFINE_integer(
-    "max_seq_length", 64,
+    "max_seq_length", 256,
     "The maximum total input sequence length after WordPiece tokenization. "
     "Sequences longer than this will be truncated, and sequences shorter "
     "than this will be padded.")
 	
-	## - modified from 128 to 64 - to fix memory issue
+	## - modified from 128 to 256 - to fix memory issue
 
 flags.DEFINE_bool("do_train", True, "Whether to run training.")
 
@@ -111,7 +111,7 @@ flags.DEFINE_bool(
     "do_predict", False,
     "Whether to run the model in inference mode on the test set.")
 
-flags.DEFINE_integer("train_batch_size", 64, "Total batch size for training.")  # modified from 32 to 64 -- to fix memory issue
+flags.DEFINE_integer("train_batch_size", 16, "Total batch size for training.")  # modified from 32 to 16 -- to fix memory issue
 
 flags.DEFINE_integer("eval_batch_size", 8, "Total batch size for eval.")
 
